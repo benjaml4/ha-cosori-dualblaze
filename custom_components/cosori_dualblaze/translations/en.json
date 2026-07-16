@@ -1,0 +1,30 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to VeSync",
+        "description": "Sign in with your VeSync app account. UK/EU accounts should use their two-letter country code (e.g. GB).",
+        "data": {
+          "username": "Email",
+          "password": "Password",
+          "country_code": "Country code (ISO 3166-1 alpha-2)"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate VeSync",
+        "data": {
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid email or password. If your account has 2FA enabled, temporarily disable it in the VeSync app, then retry.",
+      "cannot_connect": "Could not connect to the VeSync cloud.",
+      "no_air_fryer": "Login succeeded but no supported air fryer was found on this account."
+    },
+    "abort": {
+      "already_configured": "This VeSync account is already configured.",
+      "reauth_successful": "Re-authentication was successful."
+    }
+  }
+}

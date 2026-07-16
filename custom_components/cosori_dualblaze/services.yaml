@@ -1,0 +1,50 @@
+start_cook:
+  name: Start cook
+  description: >-
+    Start cooking on the Dual Blaze air fryer. Uses the given temperature and
+    time; optionally start from a named preset.
+  fields:
+    temperature:
+      name: Temperature
+      description: Cook temperature in °C (80–205, 5° steps).
+      required: true
+      example: 200
+      selector:
+        number:
+          min: 80
+          max: 205
+          step: 5
+          unit_of_measurement: "°C"
+    minutes:
+      name: Minutes
+      description: Cook time in minutes.
+      required: true
+      example: 15
+      selector:
+        number:
+          min: 1
+          max: 180
+          unit_of_measurement: min
+    preset:
+      name: Preset
+      description: Cooking preset (defaults to Manual Cook).
+      required: false
+      selector:
+        select:
+          options:
+            - "Manual Cook"
+            - "AirFry"
+            - "Broil"
+            - "Roast"
+            - "Bake"
+            - "Reheat"
+            - "Steak"
+            - "Seafood"
+            - "Veggies"
+            - "French Fries"
+            - "Frozen"
+            - "Chicken"
+
+end_cook:
+  name: End cook
+  description: Stop the current cooking session.

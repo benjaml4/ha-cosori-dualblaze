@@ -1,0 +1,16 @@
+{
+  "domain": "cosori_dualblaze",
+  "name": "Cosori Dual Blaze Air Fryer",
+  "codeowners": ["@benjaml4"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/benjaml4/ha-cosori-dualblaze",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/benjaml4/ha-cosori-dualblaze/issues",
+  "loggers": ["pyvesync"],
+  "requirements": [
+    "pyvesync @ git+https://github.com/webdjoe/pyvesync@98429e911d8c2c9a571effa34ecf83eba6699f05"
+  ],
+  "version": "0.1.0"
+}
