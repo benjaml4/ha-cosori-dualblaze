@@ -10,6 +10,7 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import (
+    ACTIVE_STATUSES,
     DEFAULT_MINUTES,
     DEFAULT_TEMP_C,
     DOMAIN,
@@ -62,7 +63,10 @@ class DualBlazeCoordinator(DataUpdateCoordinator[None]):
             raise UpdateFailed(
                 f"Error updating {self.fryer.device_name}: {err}"
             ) from err
-        interval = SCAN_INTERVAL_COOKING if self.is_running else SCAN_INTERVAL_IDLE
+        # Poll fast during any mid-cook state (including paused / basket out /
+        # queued), so manual starts and basket events surface quickly.
+        active = (self.cook_status or "") in ACTIVE_STATUSES
+        interval = SCAN_INTERVAL_COOKING if active else SCAN_INTERVAL_IDLE
         self.update_interval = timedelta(seconds=interval)
 
     @property

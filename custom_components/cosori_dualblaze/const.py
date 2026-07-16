@@ -6,12 +6,16 @@ DOMAIN = "cosori_dualblaze"
 CONF_COUNTRY_CODE = "country_code"
 DEFAULT_COUNTRY_CODE = "GB"
 
-# Polling: fast while a cook is active, slow when idle.
+# Polling: fast while a cook is active or mid-cook, slow when idle.
 SCAN_INTERVAL_COOKING = 30
-SCAN_INTERVAL_IDLE = 120
+SCAN_INTERVAL_IDLE = 60
 
 # cook_status values that mean the appliance is actively heating/cooking.
 RUNNING_STATUSES = {"cooking", "heating", "preheating"}
+
+# Additional mid-cook values (paused, basket out, queued) that warrant fast
+# polling even though nothing is heating.
+ACTIVE_STATUSES = RUNNING_STATUSES | {"pullOut", "cookStop", "ready"}
 
 # Temperature limits for the CAF-P583S-KEU (Celsius) model.
 MIN_TEMP_C = 80
