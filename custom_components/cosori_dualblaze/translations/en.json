@@ -26,5 +26,17 @@
       "already_configured": "This VeSync account is already configured.",
       "reauth_successful": "Re-authentication was successful."
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Polling intervals",
+        "description": "How often to poll the VeSync cloud. Faster polling shows changes sooner but sends more requests.",
+        "data": {
+          "scan_interval_cooking": "Poll interval while cooking (seconds)",
+          "scan_interval_idle": "Poll interval when idle (seconds)"
+        }
+      }
+    }
   }
 }

@@ -5,12 +5,27 @@ import logging
 from typing import Any
 
 import voluptuous as vol
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlow,
+)
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .const import CONF_COUNTRY_CODE, DEFAULT_COUNTRY_CODE, DOMAIN
+from .const import (
+    CONF_COUNTRY_CODE,
+    CONF_SCAN_COOKING,
+    CONF_SCAN_IDLE,
+    DEFAULT_COUNTRY_CODE,
+    DEFAULT_SCAN_COOKING,
+    DEFAULT_SCAN_IDLE,
+    DOMAIN,
+    MAX_SCAN_SECONDS,
+    MIN_SCAN_SECONDS,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -59,10 +74,42 @@ async def _async_validate(hass: HomeAssistant, data: dict[str, Any]) -> str | No
     return None
 
 
+class DualBlazeOptionsFlow(OptionsFlow):
+    """Options: polling intervals."""
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        if user_input is not None:
+            return self.async_create_entry(data=user_input)
+        options = self.config_entry.options
+        interval_validator = vol.All(
+            vol.Coerce(int), vol.Range(min=MIN_SCAN_SECONDS, max=MAX_SCAN_SECONDS)
+        )
+        schema = vol.Schema(
+            {
+                vol.Required(
+                    CONF_SCAN_COOKING,
+                    default=options.get(CONF_SCAN_COOKING, DEFAULT_SCAN_COOKING),
+                ): interval_validator,
+                vol.Required(
+                    CONF_SCAN_IDLE,
+                    default=options.get(CONF_SCAN_IDLE, DEFAULT_SCAN_IDLE),
+                ): interval_validator,
+            }
+        )
+        return self.async_show_form(step_id="init", data_schema=schema)
+
+
 class DualBlazeConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle the config flow."""
 
     VERSION = 1
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> DualBlazeOptionsFlow:
+        return DualBlazeOptionsFlow()
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None

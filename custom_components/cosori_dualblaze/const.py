@@ -6,9 +6,13 @@ DOMAIN = "cosori_dualblaze"
 CONF_COUNTRY_CODE = "country_code"
 DEFAULT_COUNTRY_CODE = "GB"
 
-# Polling: fast while a cook is active or mid-cook, slow when idle.
-SCAN_INTERVAL_COOKING = 30
-SCAN_INTERVAL_IDLE = 60
+# Polling defaults (seconds) — overridable per entry via the options flow.
+CONF_SCAN_COOKING = "scan_interval_cooking"
+CONF_SCAN_IDLE = "scan_interval_idle"
+DEFAULT_SCAN_COOKING = 3
+DEFAULT_SCAN_IDLE = 5
+MIN_SCAN_SECONDS = 2
+MAX_SCAN_SECONDS = 3600
 
 # cook_status values that mean the appliance is actively heating/cooking.
 RUNNING_STATUSES = {"cooking", "heating", "preheating"}

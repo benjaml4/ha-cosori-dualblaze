@@ -11,14 +11,16 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 from .const import (
     ACTIVE_STATUSES,
+    CONF_SCAN_COOKING,
+    CONF_SCAN_IDLE,
     DEFAULT_MINUTES,
+    DEFAULT_SCAN_COOKING,
+    DEFAULT_SCAN_IDLE,
     DEFAULT_TEMP_C,
     DOMAIN,
     MANUAL_PRESET,
     PRESETS,
     RUNNING_STATUSES,
-    SCAN_INTERVAL_COOKING,
-    SCAN_INTERVAL_IDLE,
 )
 
 if TYPE_CHECKING:
@@ -43,11 +45,15 @@ class DualBlazeCoordinator(DataUpdateCoordinator[None]):
         manager: Any,
         fryer: Any,
     ) -> None:
+        self._interval_active = entry.options.get(
+            CONF_SCAN_COOKING, DEFAULT_SCAN_COOKING
+        )
+        self._interval_idle = entry.options.get(CONF_SCAN_IDLE, DEFAULT_SCAN_IDLE)
         super().__init__(
             hass,
             _LOGGER,
             name=f"{DOMAIN} {fryer.device_name}",
-            update_interval=timedelta(seconds=SCAN_INTERVAL_IDLE),
+            update_interval=timedelta(seconds=self._interval_idle),
             config_entry=entry,
         )
         self.manager = manager
@@ -66,7 +72,7 @@ class DualBlazeCoordinator(DataUpdateCoordinator[None]):
         # Poll fast during any mid-cook state (including paused / basket out /
         # queued), so manual starts and basket events surface quickly.
         active = (self.cook_status or "") in ACTIVE_STATUSES
-        interval = SCAN_INTERVAL_COOKING if active else SCAN_INTERVAL_IDLE
+        interval = self._interval_active if active else self._interval_idle
         self.update_interval = timedelta(seconds=interval)
 
     @property
