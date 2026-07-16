@@ -86,6 +86,14 @@ class DualBlazeCoordinator(DataUpdateCoordinator[None]):
     def state_attr(self, name: str) -> Any:
         return getattr(self.fryer.state, name, None)
 
+    def _last_response_detail(self) -> str:
+        resp = getattr(self.fryer, "last_response", None)
+        if resp is None:
+            return ""
+        code = getattr(resp, "code", None)
+        message = getattr(resp, "message", None)
+        return f" (device response: code={code}, {message})"
+
     async def async_start_cook(self, temp_c: int, minutes: int, preset: str) -> None:
         """Start a cook, mirroring pyvesync's set_mode() with preset overrides."""
         fryer = self.fryer
@@ -94,6 +102,18 @@ class DualBlazeCoordinator(DataUpdateCoordinator[None]):
             raise HomeAssistantError(
                 f"Temperature {temp_c} is out of range for this air fryer"
             )
+
+        # The fryer rejects startCook unless it is fully idle. A lingering
+        # session (paused, basket out, finished-but-not-dismissed) must be
+        # ended first — the VeSync app does the same thing implicitly.
+        status = self.cook_status
+        if status is not None and status != "standby":
+            _LOGGER.debug("Clearing lingering session (status %s) before start", status)
+            try:
+                await fryer.end()
+            except Exception:  # a stale session may already be gone
+                _LOGGER.debug("Pre-start end() failed; continuing", exc_info=True)
+
         mode, recipe_id = PRESETS.get(preset, PRESETS[MANUAL_PRESET])
         recipe = replace(fryer.default_preset)
         recipe.cook_time = fryer.convert_time_for_api(int(minutes) * 60)
@@ -104,8 +124,8 @@ class DualBlazeCoordinator(DataUpdateCoordinator[None]):
         ok = await fryer.set_mode_from_recipe(recipe)
         if not ok:
             raise HomeAssistantError(
-                "The air fryer rejected the start command "
-                "(is the basket inserted and the appliance idle?)"
+                "The air fryer rejected the start command"
+                + self._last_response_detail()
             )
         await self.async_request_refresh()
 
@@ -114,6 +134,7 @@ class DualBlazeCoordinator(DataUpdateCoordinator[None]):
         ok = await self.fryer.end()
         if not ok:
             raise HomeAssistantError(
-                "The air fryer rejected the stop command (is anything cooking?)"
+                "The air fryer rejected the stop command"
+                + self._last_response_detail()
             )
         await self.async_request_refresh()
