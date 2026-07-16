@@ -12,5 +12,5 @@
   "requirements": [
     "pyvesync @ git+https://github.com/webdjoe/pyvesync@98429e911d8c2c9a571effa34ecf83eba6699f05"
   ],
-  "version": "0.1.2"
+  "version": "0.1.3"
 }

@@ -31,8 +31,11 @@ MANUAL_PRESET = "Manual Cook"
 
 # App preset recipe IDs, from packet captures shared in
 # https://github.com/webdjoe/pyvesync/issues/477 — (mode string, recipe_id).
+# Manual Cook maps to AirFry: the CAF-P583S-KEU firmware rejects
+# mode="Custom"/recipeId=1 with code 11000000 "Invalid bypass parameter"
+# (verified against real hardware, 2026-07-16).
 PRESETS: dict[str, tuple[str, int]] = {
-    MANUAL_PRESET: ("Custom", 1),
+    MANUAL_PRESET: ("AirFry", 14),
     "AirFry": ("AirFry", 14),
     "Broil": ("Broil", 17),
     "Roast": ("Roast", 13),
