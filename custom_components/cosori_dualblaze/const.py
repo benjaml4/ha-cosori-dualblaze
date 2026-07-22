@@ -7,11 +7,16 @@ CONF_COUNTRY_CODE = "country_code"
 DEFAULT_COUNTRY_CODE = "GB"
 
 # Polling defaults (seconds) — overridable per entry via the options flow.
+# Kept conservative: VeSync rate-limits / temporarily blocks accounts that
+# poll too aggressively. Idle is the big lever (the fryer is idle ~24h/day),
+# so it defaults high; cooking sessions are short and bounded.
 CONF_SCAN_COOKING = "scan_interval_cooking"
 CONF_SCAN_IDLE = "scan_interval_idle"
-DEFAULT_SCAN_COOKING = 3
-DEFAULT_SCAN_IDLE = 5
-MIN_SCAN_SECONDS = 2
+DEFAULT_SCAN_COOKING = 30
+DEFAULT_SCAN_IDLE = 600
+# Hard floor: even a hand-set option can't poll faster than this, to avoid
+# tripping VeSync's abuse detection.
+MIN_SCAN_SECONDS = 20
 MAX_SCAN_SECONDS = 3600
 
 # cook_status values that mean the appliance is actively heating/cooking.

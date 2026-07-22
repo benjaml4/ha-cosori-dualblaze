@@ -19,6 +19,7 @@ from .const import (
     DEFAULT_TEMP_C,
     DOMAIN,
     MANUAL_PRESET,
+    MIN_SCAN_SECONDS,
     PRESETS,
     RUNNING_STATUSES,
 )
@@ -45,10 +46,16 @@ class DualBlazeCoordinator(DataUpdateCoordinator[None]):
         manager: Any,
         fryer: Any,
     ) -> None:
-        self._interval_active = entry.options.get(
-            CONF_SCAN_COOKING, DEFAULT_SCAN_COOKING
+        # Clamp to the hard floor so a stale/aggressive option can't trip
+        # VeSync's rate limiter.
+        self._interval_active = max(
+            MIN_SCAN_SECONDS,
+            entry.options.get(CONF_SCAN_COOKING, DEFAULT_SCAN_COOKING),
         )
-        self._interval_idle = entry.options.get(CONF_SCAN_IDLE, DEFAULT_SCAN_IDLE)
+        self._interval_idle = max(
+            MIN_SCAN_SECONDS,
+            entry.options.get(CONF_SCAN_IDLE, DEFAULT_SCAN_IDLE),
+        )
         super().__init__(
             hass,
             _LOGGER,
