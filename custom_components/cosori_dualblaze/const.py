@@ -12,11 +12,12 @@ DEFAULT_COUNTRY_CODE = "GB"
 # so it defaults high; cooking sessions are short and bounded.
 CONF_SCAN_COOKING = "scan_interval_cooking"
 CONF_SCAN_IDLE = "scan_interval_idle"
-DEFAULT_SCAN_COOKING = 30
-DEFAULT_SCAN_IDLE = 600
-# Hard floor: even a hand-set option can't poll faster than this, to avoid
-# tripping VeSync's abuse detection.
-MIN_SCAN_SECONDS = 20
+DEFAULT_SCAN_COOKING = 6
+DEFAULT_SCAN_IDLE = 420
+# Hard floor: even a hand-set option can't poll faster than this. Fast polling
+# is only safe during the short, bounded cooking window — sustained fast idle
+# polling is what trips VeSync's abuse detection.
+MIN_SCAN_SECONDS = 5
 MAX_SCAN_SECONDS = 3600
 
 # cook_status values that mean the appliance is actively heating/cooking.

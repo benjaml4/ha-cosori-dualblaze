@@ -31,7 +31,7 @@
     "step": {
       "init": {
         "title": "Polling intervals",
-        "description": "How often to poll the VeSync cloud. Lower values show changes sooner but send more requests \u2014 VeSync temporarily blocks accounts that poll too aggressively, so keep the idle interval high (300s+). Minimum 20s.",
+        "description": "How often to poll the VeSync cloud. Lower values show changes sooner but send more requests \u2014 VeSync temporarily blocks accounts that poll too aggressively, so keep the idle interval high (300s+). Minimum 5s.",
         "data": {
           "scan_interval_cooking": "Poll interval while cooking (seconds)",
           "scan_interval_idle": "Poll interval when idle (seconds)"
